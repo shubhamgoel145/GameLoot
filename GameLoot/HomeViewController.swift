@@ -7,13 +7,34 @@
 //
 
 import UIKit
+import FirebaseAuth
+import FirebaseFirestore
 
 class HomeViewController: UIViewController {
 
+    @IBOutlet weak var points: UILabel!
+    @IBOutlet weak var wmessage: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        let db = Firestore.firestore()
+        let uid = Auth.auth().currentUser?.uid
+        print(uid as! String)
+        let ui = db.collection("Userinfo")
+        let query = ui.whereField("UserID", isEqualTo: uid)
+        print(query.getDocuments(completion: { (snapshot, erro) in
+            if erro == nil{
+                for document in (snapshot?.documents)! {
+                    let fn = document.get("FirstName") as! String
+                    let ln = document.get("LastName") as! String
+                    let c = document.get("Coins") as! String
+                    
+                    self.wmessage.text = fn + " " + ln
+                    self.points.text = c
+                    
+                }
+            }
+        }))
+        wmessage.text = "HI " + (Auth.auth().currentUser?.email)!
     }
 
     override func didReceiveMemoryWarning() {
@@ -32,4 +53,17 @@ class HomeViewController: UIViewController {
     }
     */
 
+    @IBAction func SignOut(_ sender: Any) {
+        
+        do
+        {
+            try Auth.auth().signOut()
+            performSegue(withIdentifier: "logoutseg", sender: nil)
+
+        }
+        catch let error as NSError
+        {
+            print (error.localizedDescription)
+        }
+    }
 }

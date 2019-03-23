@@ -1,0 +1,6 @@
+framework module Pods_GameLoot {
+  umbrella header "Pods-GameLoot-umbrella.h"
+
+  export *
+  module * { export * }
+}
